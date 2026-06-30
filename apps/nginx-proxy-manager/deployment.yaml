@@ -3,6 +3,30 @@ kind: Namespace
 metadata:
   name: nginx-proxy-manager
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: npm-data
+  namespace: nginx-proxy-manager
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: npm-letsencrypt
+  namespace: nginx-proxy-manager
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,6 +52,11 @@ spec:
           name: https
         - containerPort: 81
           name: admin
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: letsencrypt
+          mountPath: /etc/letsencrypt
         resources:
           requests:
             memory: "128Mi"
@@ -35,6 +64,13 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "300m"
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: npm-data
+      - name: letsencrypt
+        persistentVolumeClaim:
+          claimName: npm-letsencrypt
 ---
 apiVersion: v1
 kind: Service
