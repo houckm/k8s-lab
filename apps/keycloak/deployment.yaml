@@ -43,6 +43,16 @@ spec:
             secretKeyRef:
               name: keycloak-secret
               key: KEYCLOAK_ADMIN_PASSWORD
+        - name: KC_PROXY
+          value: "edge"
+        - name: KC_HOSTNAME
+          value: "keycloak.homelab.local"
+        - name: KC_HOSTNAME_STRICT
+          value: "false"
+        - name: KC_HOSTNAME_STRICT_HTTPS
+          value: "false"
+        - name: KC_HTTP_ENABLED
+          value: "true"
         ports:
         - containerPort: 8080
         resources:
